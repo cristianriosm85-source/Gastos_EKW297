@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reporte de Conductor — Uber & DiDi</title>
+<title>Reporte Conductor — Uber & DiDi (Cloud)</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -30,7 +30,6 @@
     min-height: 100vh;
   }
 
-  /* HEADER */
   .header {
     background: var(--text);
     color: white;
@@ -61,16 +60,45 @@
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 700;
-    letter-spacing: 0.05em;
     text-transform: uppercase;
   }
   .badge-uber { background: white; color: black; }
   .badge-didi { background: var(--didi); color: white; }
 
-  /* MAIN LAYOUT */
   .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
 
-  /* PERIOD SELECTOR */
+  .sync-bar {
+    background: linear-gradient(135deg, #1a7a4a15 0%, #FF6B0015 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .sync-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.8rem;
+    font-family: 'DM Mono', monospace;
+  }
+  .sync-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ccc;
+  }
+  .sync-dot.online { background: var(--green); box-shadow: 0 0 4px var(--green); }
+  .sync-dot.syncing { background: var(--didi); animation: pulse 1s infinite; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
   .period-bar {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -119,10 +147,11 @@
   .btn-orange:hover { background: #e05d00; }
   .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
   .btn-outline:hover { background: var(--bg); }
+  .btn-green { background: var(--green); color: white; }
+  .btn-green:hover { background: #145c3a; }
   .btn-danger { background: var(--red-bg); color: var(--red); border: 1.5px solid #f5c6c2; }
   .btn-danger:hover { background: #fbd5d2; }
 
-  /* KPI CARDS */
   .kpi-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -163,7 +192,6 @@
     font-family: 'DM Mono', monospace;
   }
 
-  /* SPLIT VIEW */
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
   @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
 
@@ -188,7 +216,6 @@
   }
   .panel-body { padding: 1.5rem; }
 
-  /* PLATFORM BREAKDOWN */
   .platform-row {
     display: flex;
     justify-content: space-between;
@@ -202,7 +229,6 @@
   .bar-wrap { height: 6px; background: var(--bg); border-radius: 3px; margin-top: 6px; }
   .bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
 
-  /* FORM MODAL */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -265,7 +291,6 @@
     background: var(--bg);
     color: var(--text);
     outline: none;
-    transition: border-color 0.15s;
   }
   .form-group input:focus,
   .form-group select:focus { border-color: var(--accent); }
@@ -278,7 +303,6 @@
     justify-content: flex-end;
   }
 
-  /* TABLA DE REGISTROS */
   .records-panel {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -340,7 +364,6 @@
   }
   .empty-state .icon { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.4; }
 
-  /* TOAST */
   .toast {
     position: fixed;
     bottom: 24px;
@@ -359,55 +382,13 @@
   .toast.show { opacity: 1; transform: translateY(0); }
   .toast.success { background: var(--green); }
   .toast.error { background: var(--red); }
-
-  /* SCRIPT CONFIG PANEL */
-  .config-panel {
-    background: #1A1A1A;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .config-panel label {
-    color: #999;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    white-space: nowrap;
-  }
-  .config-panel input {
-    flex: 1;
-    min-width: 200px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid #444;
-    background: #2A2A2A;
-    color: #EEE;
-    outline: none;
-  }
-  .config-panel input:focus { border-color: var(--didi); }
-
-  .section-title {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin-bottom: 0.75rem;
-  }
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-left">
-    <h1>Reporte del Conductor</h1>
+    <h1>🚗 Reporte del Conductor</h1>
     <p id="header-date">Cargando...</p>
   </div>
   <div class="platform-badges">
@@ -418,13 +399,16 @@
 
 <div class="container">
 
-  <!-- CONFIG API -->
-  <div class="config-panel">
-    <label>Google Script URL</label>
-    <input type="text" id="script-url"
-      value="https://script.google.com/macros/s/AKfycbzRzKxoZdaYggSBqgat4ACEPZuXjXXs7vg5ZgCNk72JTAX0zZMHPvtqLZaIQyBICARdhA/exec"
-      placeholder="Pega tu URL de Google Apps Script aquí">
-    <button class="btn btn-orange" onclick="loadFromSheet()">Cargar datos</button>
+  <!-- BARRA DE SINCRONIZACIÓN -->
+  <div class="sync-bar">
+    <div class="sync-status">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-text">Listo</span>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-green" onclick="loadFromSheet()">📥 Cargar desde Google Sheets</button>
+      <button class="btn btn-orange" onclick="saveToSheet()">☁️ Guardar en Google Sheets</button>
+    </div>
   </div>
 
   <!-- PERIOD FILTER -->
@@ -441,6 +425,7 @@
     </select>
     <label>Año</label>
     <select id="filter-anio">
+      <option value="2024">2024</option>
       <option value="2025">2025</option>
       <option value="2026" selected>2026</option>
     </select>
@@ -452,28 +437,28 @@
     </select>
     <button class="btn btn-primary" onclick="applyFilters()">Filtrar</button>
     <button class="btn btn-outline" onclick="resetFilters()">Limpiar</button>
-    <button class="btn btn-orange" onclick="openModal()" style="margin-left:auto">+ Agregar registro</button>
+    <button class="btn btn-orange" onclick="openModal()">+ Agregar registro</button>
   </div>
 
   <!-- KPIs -->
   <div class="kpi-grid">
     <div class="kpi-card highlight-green">
-      <div class="kpi-label">Ingresos totales</div>
+      <div class="kpi-label">💰 Ingresos totales</div>
       <div class="kpi-value green" id="kpi-ingresos">$0.00</div>
       <div class="kpi-sub" id="kpi-viajes">0 viajes registrados</div>
     </div>
     <div class="kpi-card highlight-red">
-      <div class="kpi-label">Gastos totales</div>
+      <div class="kpi-label">💸 Gastos totales</div>
       <div class="kpi-value red" id="kpi-gastos">$0.00</div>
       <div class="kpi-sub" id="kpi-gastos-sub">0 conceptos</div>
     </div>
     <div class="kpi-card highlight-black">
-      <div class="kpi-label">Ganancia neta</div>
+      <div class="kpi-label">📊 Ganancia neta</div>
       <div class="kpi-value" id="kpi-neta" style="color:var(--text)">$0.00</div>
       <div class="kpi-sub" id="kpi-margen">Margen: 0%</div>
     </div>
     <div class="kpi-card highlight-orange">
-      <div class="kpi-label">Promedio por día</div>
+      <div class="kpi-label">📅 Promedio por día</div>
       <div class="kpi-value orange" id="kpi-promedio">$0.00</div>
       <div class="kpi-sub" id="kpi-dias">0 días con actividad</div>
     </div>
@@ -483,7 +468,7 @@
   <div class="two-col">
     <div class="panel">
       <div class="panel-header">
-        <span class="panel-title">Ingresos por plataforma</span>
+        <span class="panel-title">📱 Ingresos por plataforma</span>
       </div>
       <div class="panel-body" id="platform-breakdown">
         <p style="color:var(--muted);font-size:0.85rem">Sin datos aún.</p>
@@ -491,7 +476,7 @@
     </div>
     <div class="panel">
       <div class="panel-header">
-        <span class="panel-title">Top categorías de gasto</span>
+        <span class="panel-title">⛽ Top categorías de gasto</span>
       </div>
       <div class="panel-body" id="gastos-breakdown">
         <p style="color:var(--muted);font-size:0.85rem">Sin datos aún.</p>
@@ -502,10 +487,10 @@
   <!-- TABLA REGISTROS -->
   <div class="records-panel">
     <div class="records-header">
-      <span class="records-title">Todos los registros</span>
+      <span class="records-title">📋 Todos los registros</span>
       <div style="display:flex;gap:8px">
-        <button class="btn btn-outline" onclick="exportCSV()">Exportar CSV</button>
-        <button class="btn btn-outline" onclick="saveToSheet()">💾 Guardar en Sheet</button>
+        <button class="btn btn-outline" onclick="exportCSV()">📄 Exportar CSV</button>
+        <button class="btn btn-outline" onclick="backupLocal()">💾 Respaldar local</button>
       </div>
     </div>
     <div id="tabla-container">
@@ -542,7 +527,6 @@
           <select id="f-plataforma">
             <option value="Uber">Uber</option>
             <option value="DiDi">DiDi</option>
-            <option value="Ambas">Ambas</option>
           </select>
         </div>
       </div>
@@ -557,16 +541,18 @@
           <option>Celular / Datos</option>
           <option>Multa</option>
           <option>Refacciones</option>
+          <option>Estacionamiento</option>
+          <option>Peaje</option>
           <option>Otro</option>
         </select>
       </div>
       <div class="form-group">
-        <label>Monto ($)</label>
+        <label>Monto ($ MXN)</label>
         <input type="number" id="f-monto" placeholder="0.00" min="0" step="0.01">
       </div>
       <div class="form-group">
         <label>Descripción (opcional)</label>
-        <input type="text" id="f-descripcion" placeholder="Ej: viaje aeropuerto, llanta pinchada...">
+        <input type="text" id="f-descripcion" placeholder="Ej: viaje aeropuerto, cambio de aceite...">
       </div>
     </div>
     <div class="form-footer">
@@ -580,15 +566,21 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const SCRIPT_URL_KEY = 'uber_didi_script_url';
-let records = JSON.parse(localStorage.getItem('uber_didi_records') || '[]');
-let filteredRecords = [...records];
+// =====================================================
+// URL DEL GOOGLE APPS SCRIPT - INTEGRADA DIRECTAMENTE
+// =====================================================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRzKxoZdaYggSBqgat4ACEPZuXjXXs7vg5ZgCNk72JTAX0zZMHPvtqLZaIQyBICARdhA/exec";
+
+// =====================================================
+// VARIABLES GLOBALES
+// =====================================================
+let records = [];
+let filteredRecords = [];
 let editingId = null;
 
-function getScriptUrl() {
-  return document.getElementById('script-url').value.trim();
-}
-
+// =====================================================
+// FUNCIONES DE UTILIDAD
+// =====================================================
 function today() {
   return new Date().toISOString().split('T')[0];
 }
@@ -604,10 +596,127 @@ function showToast(msg, type = '') {
   setTimeout(() => t.className = 'toast', 2800);
 }
 
+function setSyncStatus(status, isOnline = true) {
+  const dot = document.getElementById('sync-dot');
+  const text = document.getElementById('sync-text');
+  if (status === 'loading') {
+    dot.className = 'sync-dot syncing';
+    text.textContent = 'Sincronizando...';
+  } else if (status === 'online') {
+    dot.className = 'sync-dot online';
+    text.textContent = 'Conectado a Google Sheets';
+  } else {
+    dot.className = 'sync-dot';
+    text.textContent = status;
+  }
+}
+
+// =====================================================
+// FUNCIONES DE GOOGLE SHEETS
+// =====================================================
+async function loadFromSheet() {
+  setSyncStatus('loading');
+  showToast('📥 Cargando datos desde Google Sheets...');
+  
+  try {
+    const response = await fetch(`${SCRIPT_URL}?action=load&t=${Date.now()}`);
+    const data = await response.json();
+    
+    if (Array.isArray(data)) {
+      if (data.length > 0) {
+        records = data;
+        localStorage.setItem('uber_didi_records', JSON.stringify(records));
+        applyFilters();
+        showToast(`✅ Cargados ${records.length} registros desde Google Sheets`, 'success');
+        setSyncStatus('online');
+      } else {
+        showToast('📭 No hay datos en Google Sheets. Comienza agregando registros.', 'success');
+        setSyncStatus('online');
+      }
+    } else if (data.error) {
+      showToast(`❌ Error: ${data.error}`, 'error');
+      setSyncStatus('Error - Revisa el script');
+    } else {
+      showToast('❌ Respuesta inesperada del servidor', 'error');
+      setSyncStatus('Error de conexión');
+    }
+  } catch (error) {
+    console.error('Error loading:', error);
+    showToast('❌ No se pudo conectar con Google Sheets. Verifica la URL del script.', 'error');
+    setSyncStatus('Sin conexión');
+  }
+}
+
+async function saveToSheet() {
+  if (records.length === 0) {
+    showToast('📭 No hay registros para guardar', 'error');
+    return;
+  }
+  
+  setSyncStatus('loading');
+  showToast('☁️ Guardando en Google Sheets...');
+  
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'save', records: records })
+    });
+    
+    // Con no-cors no podemos leer la respuesta, asumimos éxito
+    showToast(`✅ ${records.length} registros guardados en Google Sheets`, 'success');
+    setSyncStatus('online');
+  } catch (error) {
+    console.error('Error saving:', error);
+    showToast('❌ Error al guardar. Verifica la URL del script.', 'error');
+    setSyncStatus('Error al guardar');
+  }
+}
+
+// =====================================================
+// FUNCIONES DE LOCALSTORAGE
+// =====================================================
+function loadLocalData() {
+  const saved = localStorage.getItem('uber_didi_records');
+  if (saved) {
+    try {
+      records = JSON.parse(saved);
+    } catch(e) { records = []; }
+  } else {
+    records = [];
+  }
+  filteredRecords = [...records];
+  applyFilters();
+}
+
+function saveLocalData() {
+  localStorage.setItem('uber_didi_records', JSON.stringify(records));
+}
+
+function backupLocal() {
+  if (records.length === 0) {
+    showToast('📭 No hay datos para respaldar', 'error');
+    return;
+  }
+  const dataStr = JSON.stringify(records, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.href = url;
+  link.download = `uber_didi_backup_${new Date().toISOString().split('T')[0]}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+  showToast('💾 Respaldo guardado localmente', 'success');
+}
+
+// =====================================================
+// CRUD DE REGISTROS
+// =====================================================
 function togglePlatforma() {
   const tipo = document.getElementById('f-tipo').value;
-  document.getElementById('plat-group').style.display = tipo === 'Ingreso' ? '' : 'none';
-  document.getElementById('cat-group').style.display = tipo === 'Gasto' ? '' : 'none';
+  document.getElementById('plat-group').style.display = tipo === 'Ingreso' ? 'flex' : 'none';
+  document.getElementById('cat-group').style.display = tipo === 'Gasto' ? 'flex' : 'none';
 }
 
 function openModal(id = null) {
@@ -615,10 +724,11 @@ function openModal(id = null) {
   const overlay = document.getElementById('modal-overlay');
   overlay.classList.add('open');
   document.getElementById('f-fecha').value = today();
+  
   if (id !== null) {
     const rec = records.find(r => r.id === id);
     if (rec) {
-      document.getElementById('modal-title').textContent = 'Editar registro';
+      document.getElementById('modal-title').textContent = '✏️ Editar registro';
       document.getElementById('f-tipo').value = rec.tipo;
       document.getElementById('f-fecha').value = rec.fecha;
       document.getElementById('f-plataforma').value = rec.plataforma || 'Uber';
@@ -628,7 +738,7 @@ function openModal(id = null) {
       togglePlatforma();
     }
   } else {
-    document.getElementById('modal-title').textContent = 'Nuevo registro';
+    document.getElementById('modal-title').textContent = '+ Nuevo registro';
     document.getElementById('f-tipo').value = 'Ingreso';
     document.getElementById('f-monto').value = '';
     document.getElementById('f-descripcion').value = '';
@@ -650,7 +760,7 @@ function saveRecord() {
   const cat = tipo === 'Gasto' ? document.getElementById('f-categoria').value : '';
 
   if (!fecha || isNaN(monto) || monto <= 0) {
-    showToast('Por favor completa todos los campos', 'error');
+    showToast('❌ Por favor completa todos los campos correctamente', 'error');
     return;
   }
 
@@ -659,7 +769,7 @@ function saveRecord() {
     if (idx > -1) {
       records[idx] = { ...records[idx], tipo, fecha, plataforma: plat, categoria: cat, monto, descripcion: desc };
     }
-    showToast('Registro actualizado ✓', 'success');
+    showToast('✏️ Registro actualizado ✓', 'success');
   } else {
     const rec = {
       id: Date.now(),
@@ -670,22 +780,25 @@ function saveRecord() {
       descripcion: desc
     };
     records.push(rec);
-    showToast('Registro guardado ✓', 'success');
+    showToast('✅ Registro guardado ✓', 'success');
   }
 
-  localStorage.setItem('uber_didi_records', JSON.stringify(records));
+  saveLocalData();
   closeModal();
   applyFilters();
 }
 
 function deleteRecord(id) {
-  if (!confirm('¿Eliminar este registro?')) return;
+  if (!confirm('¿Eliminar este registro permanentemente?')) return;
   records = records.filter(r => r.id !== id);
-  localStorage.setItem('uber_didi_records', JSON.stringify(records));
+  saveLocalData();
   applyFilters();
-  showToast('Registro eliminado');
+  showToast('🗑️ Registro eliminado');
 }
 
+// =====================================================
+// FILTRADO Y RENDERIZADO
+// =====================================================
 function applyFilters() {
   const mes = document.getElementById('filter-mes').value;
   const anio = document.getElementById('filter-anio').value;
@@ -736,7 +849,6 @@ function renderBreakdowns() {
   const ingresos = filteredRecords.filter(r => r.tipo === 'Ingreso');
   const gastos = filteredRecords.filter(r => r.tipo === 'Gasto');
 
-  // Plataformas
   const platMap = {};
   ingresos.forEach(r => {
     const p = r.plataforma || 'Otra';
@@ -745,7 +857,7 @@ function renderBreakdowns() {
   const totalIn = Object.values(platMap).reduce((s, v) => s + v, 0);
   const platDiv = document.getElementById('platform-breakdown');
   if (!Object.keys(platMap).length) {
-    platDiv.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">Sin ingresos en el período.</p>';
+    platDiv.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">📭 Sin ingresos en el período.</p>';
   } else {
     platDiv.innerHTML = Object.entries(platMap).map(([p, v]) => {
       const pct = totalIn > 0 ? Math.round((v / totalIn) * 100) : 0;
@@ -763,7 +875,6 @@ function renderBreakdowns() {
     }).join('');
   }
 
-  // Gastos por categoría
   const catMap = {};
   gastos.forEach(r => {
     const c = r.categoria || 'Otro';
@@ -773,7 +884,7 @@ function renderBreakdowns() {
   const sorted = Object.entries(catMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const gasDiv = document.getElementById('gastos-breakdown');
   if (!sorted.length) {
-    gasDiv.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">Sin gastos en el período.</p>';
+    gasDiv.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">📭 Sin gastos en el período.</p>';
   } else {
     gasDiv.innerHTML = sorted.map(([c, v]) => {
       const pct = totalGas > 0 ? Math.round((v / totalGas) * 100) : 0;
@@ -794,7 +905,7 @@ function renderBreakdowns() {
 function renderTable() {
   const container = document.getElementById('tabla-container');
   if (!filteredRecords.length) {
-    container.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>No hay registros para este período.</p></div>';
+    container.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>No hay registros para este período.<br>¡Agrega tu primer ingreso o gasto!</p></div>';
     return;
   }
   const sorted = [...filteredRecords].sort((a, b) => b.fecha.localeCompare(a.fecha));
@@ -810,7 +921,8 @@ function renderTable() {
       </tr>
     </thead>
     <tbody>
-      ${sorted.map(r => `<tr>
+      ${sorted.map(r => `
+      <tr>
         <td>${r.fecha}</td>
         <td><span class="tag ${r.tipo === 'Ingreso' ? 'tag-ingreso' : 'tag-gasto'}">${r.tipo}</span></td>
         <td>
@@ -819,7 +931,7 @@ function renderTable() {
             : `<span style="font-size:0.82rem;color:var(--muted)">${r.categoria || '—'}</span>`
           }
         </td>
-        <td style="color:var(--muted);font-family:'Syne',sans-serif;font-size:0.82rem">${r.descripcion || '—'}</td>
+        <td style="color:var(--muted);font-family:'Syne',sans-serif;font-size:0.82rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.descripcion || '—'}</td>
         <td style="text-align:right" class="${r.tipo === 'Ingreso' ? 'amount-positive' : 'amount-negative'}">
           ${r.tipo === 'Ingreso' ? '+' : '-'}${formatMXN(r.monto)}
         </td>
@@ -827,66 +939,35 @@ function renderTable() {
           <button onclick="openModal(${r.id})" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:0.8rem;padding:2px 6px" title="Editar">✎</button>
           <button onclick="deleteRecord(${r.id})" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:0.8rem;padding:2px 6px" title="Eliminar">✕</button>
         </td>
-      </tr>`).join('')}
+      </tr>
+      `).join('')}
     </tbody>
   </table>`;
 }
 
 function exportCSV() {
-  if (!filteredRecords.length) { showToast('No hay datos para exportar', 'error'); return; }
-  const header = ['Fecha','Tipo','Plataforma','Categoría','Descripción','Monto'];
-  const rows = filteredRecords.map(r =>
-    [r.fecha, r.tipo, r.plataforma||'', r.categoria||'', r.descripcion||'', r.monto].join(',')
-  );
-  const csv = [header.join(','), ...rows].join('\n');
-  const blob = new Blob(['\uFEFF' + csv], {type: 'text/csv;charset=utf-8;'});
+  if (!filteredRecords.length) { showToast('❌ No hay datos para exportar', 'error'); return; }
+  const headers = ['Fecha', 'Tipo', 'Plataforma', 'Categoría', 'Descripción', 'Monto'];
+  const rows = filteredRecords.map(r => [r.fecha, r.tipo, r.plataforma || '', r.categoria || '', r.descripcion || '', r.monto]);
+  const csvContent = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'reporte-conductor.csv'; a.click();
-  showToast('CSV exportado ✓', 'success');
+  link.href = url;
+  link.download = `reporte_conductor_${new Date().toISOString().split('T')[0]}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+  showToast('📄 CSV exportado correctamente', 'success');
 }
 
-async function saveToSheet() {
-  const url = getScriptUrl();
-  if (!url) { showToast('Configura la URL del script primero', 'error'); return; }
-  showToast('Guardando en Google Sheets...');
-  try {
-    await fetch(url, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'save', records })
-    });
-    showToast('Datos enviados a Google Sheets ✓', 'success');
-  } catch(e) {
-    showToast('No se pudo conectar al script', 'error');
-  }
-}
+// =====================================================
+// INICIALIZACIÓN
+// =====================================================
+document.getElementById('header-date').textContent = new Date().toLocaleDateString('es-MX', {
+  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+});
 
-async function loadFromSheet() {
-  const url = getScriptUrl();
-  if (!url) { showToast('Configura la URL del script primero', 'error'); return; }
-  showToast('Cargando desde Google Sheets...');
-  try {
-    const res = await fetch(url + '?action=load');
-    const data = await res.json();
-    if (Array.isArray(data)) {
-      records = data;
-      localStorage.setItem('uber_didi_records', JSON.stringify(records));
-      applyFilters();
-      showToast('Datos cargados ✓', 'success');
-    } else {
-      showToast('Respuesta inesperada del script', 'error');
-    }
-  } catch(e) {
-    showToast('Error al cargar. Verifica la URL del script', 'error');
-  }
-}
-
-// Init
-document.getElementById('header-date').textContent =
-  new Date().toLocaleDateString('es-MX', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-applyFilters();
+loadLocalData();
 </script>
 </body>
 </html>

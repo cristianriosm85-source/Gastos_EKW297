@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Registro del Conductor</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F3EE;color:#1A1A1A;min-height:100vh;display:flex;flex-direction:column}
+.header{background:#1A1A1A;color:white;padding:1.25rem 1.5rem;text-align:center}
+.header h1{font-size:1.1rem;font-weight:600}
+.header p{font-size:.75rem;color:#999;margin-top:3px}
+.wrap{flex:1;padding:1.25rem;max-width:480px;margin:0 auto;width:100%}
+
+.botones{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.5rem}
+.btn-grande{border:none;border-radius:18px;padding:32px 12px;font-size:1.05rem;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;transition:transform .12s,opacity .12s}
+.btn-grande:active{transform:scale(.95);opacity:.8}
+.btn-verde{background:#E8F5EE;color:#1A7A4A;border:2px solid #a8d5bc}
+.btn-rojo{background:#FDECEA;color:#C0392B;border:2px solid #f5b8b3}
+.icono{font-size:2.2rem;line-height:1}
+
+.totales{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.card{background:white;border-radius:12px;padding:14px;text-align:center;border:1px solid #E2DDD5}
+.card-label{font-size:.65rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.card-val{font-size:1.6rem;font-weight:700}
+.cv-g{color:#1A7A4A}.cv-r{color:#C0392B}
+
+.neta{background:white;border-radius:12px;padding:18px;text-align:center;margin-bottom:1.5rem;border:1px solid #E2DDD5}
+.neta-label{font-size:.65rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.neta-val{font-size:2.2rem;font-weight:800}
+
+.lista-label{font-size:.65rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.item{background:white;border:1px solid #E2DDD5;border-radius:12px;padding:13px 15px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.item-izq{display:flex;align-items:center;gap:10px}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.dg{background:#1A7A4A}.dr{background:#C0392B}
+.item-tipo{font-size:.92rem;font-weight:600}
+.item-hora{font-size:.72rem;color:#aaa;margin-top:2px}
+.item-monto{font-size:1.05rem;font-weight:700}
+.item-del{background:none;border:none;color:#ddd;cursor:pointer;font-size:1.3rem;padding:0 4px;line-height:1}
+.item-del:active{color:#C0392B}
+.vacio{text-align:center;color:#bbb;font-size:.88rem;padding:2rem 0}
+
+.sync{text-align:center;font-size:.7rem;color:#bbb;margin-top:1.25rem;padding-bottom:1.5rem;display:flex;align-items:center;justify-content:center;gap:6px}
+.sdot{width:7px;height:7px;border-radius:50%;background:#ddd;flex-shrink:0}
+.sdot.ok{background:#27ae60}
+.sdot.err{background:#e74c3c}
+.sdot.spin{background:#FF6B00;animation:pu 1s infinite}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.25}}
+
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:white;border-radius:22px 22px 0 0;padding:2rem 1.5rem 2.5rem;width:100%;max-width:480px}
+.modal h2{font-size:1.15rem;font-weight:700;margin-bottom:1.5rem;text-align:center;color:#1A1A1A}
+.modal input[type=number]{display:block;width:100%;font-size:2.2rem;font-weight:700;text-align:center;padding:14px;border:2px solid #E2DDD5;border-radius:14px;background:#F5F3EE;color:#1A1A1A;outline:none;margin-bottom:1.25rem;font-family:inherit}
+.modal input[type=number]:focus{border-color:#1A1A1A}
+.mbtn{display:block;width:100%;padding:15px;border-radius:14px;font-size:1rem;font-weight:700;cursor:pointer;border:none;margin-bottom:8px;font-family:inherit}
+.mbtn-g{background:#1A7A4A;color:white}
+.mbtn-r{background:#C0392B;color:white}
+.mbtn-cancel{background:#F0EEE8;color:#888}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Registro del Conductor</h1>
+  <p id="fecha-hoy"></p>
+</div>
+
+<div class="wrap">
+
+  <div class="botones">
+    <button class="btn-grande btn-verde" onclick="abrir('ganancia')">
+      <span class="icono">💵</span>
+      Gané dinero
+    </button>
+    <button class="btn-grande btn-rojo" onclick="abrir('gasto')">
+      <span class="icono">⛽</span>
+      Gasté dinero
+    </button>
+  </div>
+
+  <div class="totales">
+    <div class="card">
+      <div class="card-label">Ganancias</div>
+      <div class="card-val cv-g" id="tot-g">$0</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Gastos</div>
+      <div class="card-val cv-r" id="tot-r">$0</div>
+    </div>
+  </div>
+
+  <div class="neta">
+    <div class="neta-label">Ganancia libre del día</div>
+    <div class="neta-val" id="tot-n">$0</div>
+  </div>
+
+  <div class="lista-label">Registros de hoy</div>
+  <div id="lista"></div>
+
+  <div class="sync">
+    <div class="sdot" id="sdot"></div>
+    <span id="stxt">Sin sincronizar</span>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h2 id="modal-titulo">¿Cuánto ganaste?</h2>
+    <input type="number" id="modal-input" inputmode="decimal" placeholder="0.00" min="0" step="0.01">
+    <button class="mbtn" id="mbtn-ok" onclick="confirmar()">Guardar</button>
+    <button class="mbtn mbtn-cancel" onclick="cerrar()">Cancelar</button>
+  </div>
+</div>
+
+<script>
+const SCRIPT = "https://script.google.com/macros/s/AKfycbzRzKxoZdaYggSBqgat4ACEPZuXjXXs7vg5ZgCNk72JTAX0zZMHPvtqLZaIQyBICARdhA/exec";
+const KEY = 'conductor_registros';
+let tipo_actual = '';
+
+function hoy(){ return new Date().toISOString().split('T')[0]; }
+function fmt(n){ return '$'+parseFloat(n||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function hora(){ return new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}); }
+
+function cargar(){
+  try { return (JSON.parse(localStorage.getItem(KEY))||[]).filter(r=>r.fecha===hoy()); }
+  catch(e){ return []; }
+}
+
+function guardar(lista){
+  const prev = JSON.parse(localStorage.getItem(KEY)||'[]').filter(r=>r.fecha!==hoy());
+  localStorage.setItem(KEY, JSON.stringify([...prev,...lista]));
+}
+
+function sync(estado, txt){
+  document.getElementById('sdot').className = 'sdot '+estado;
+  document.getElementById('stxt').textContent = txt;
+}
+
+async function enviar(){
+  sync('spin','Guardando en Google Sheets…');
+  try {
+    await fetch(SCRIPT, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({action:'save', records: cargar()})
+    });
+    sync('ok','Guardado en Google Sheets ✓');
+  } catch(e){
+    sync('err','Sin conexión — guardado solo en el celular');
+  }
+}
+
+function abrir(t){
+  tipo_actual = t;
+  document.getElementById('modal-titulo').textContent = t==='ganancia' ? '¿Cuánto ganaste?' : '¿Cuánto gastaste?';
+  const btn = document.getElementById('mbtn-ok');
+  btn.className = 'mbtn '+(t==='ganancia'?'mbtn-g':'mbtn-r');
+  btn.textContent = t==='ganancia' ? '💵 Guardar ganancia' : '⛽ Guardar gasto';
+  document.getElementById('modal-input').value = '';
+  document.getElementById('modal').classList.add('open');
+  setTimeout(()=>document.getElementById('modal-input').focus(), 150);
+}
+
+function cerrar(){
+  document.getElementById('modal').classList.remove('open');
+}
+
+function confirmar(){
+  const val = parseFloat(document.getElementById('modal-input').value);
+  if(!val||val<=0){ document.getElementById('modal-input').focus(); return; }
+  const lista = cargar();
+  lista.push({id:Date.now(), fecha:hoy(), tipo:tipo_actual, monto:val, hora:hora()});
+  guardar(lista);
+  cerrar();
+  render();
+  enviar();
+}
+
+function eliminar(id){
+  guardar(cargar().filter(r=>r.id!==id));
+  render();
+  enviar();
+}
+
+function render(){
+  const lista = cargar();
+  const totG = lista.filter(r=>r.tipo==='ganancia').reduce((s,r)=>s+r.monto,0);
+  const totR = lista.filter(r=>r.tipo==='gasto').reduce((s,r)=>s+r.monto,0);
+  const neta = totG-totR;
+  document.getElementById('tot-g').textContent = fmt(totG);
+  document.getElementById('tot-r').textContent = fmt(totR);
+  const nel = document.getElementById('tot-n');
+  nel.textContent = fmt(neta);
+  nel.style.color = neta>=0?'#1A7A4A':'#C0392B';
+  const div = document.getElementById('lista');
+  if(!lista.length){ div.innerHTML='<div class="vacio">Ningún registro hoy todavía.<br>Toca un botón para empezar.</div>'; return; }
+  div.innerHTML=[...lista].reverse().map(r=>`
+    <div class="item">
+      <div class="item-izq">
+        <div class="dot ${r.tipo==='ganancia'?'dg':'dr'}"></div>
+        <div>
+          <div class="item-tipo">${r.tipo==='ganancia'?'Ganancia':'Gasto'}</div>
+          <div class="item-hora">${r.hora||''}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="item-monto" style="color:${r.tipo==='ganancia'?'#1A7A4A':'#C0392B'}">${r.tipo==='ganancia'?'+':'-'}${fmt(r.monto)}</span>
+        <button class="item-del" onclick="eliminar(${r.id})">×</button>
+      </div>
+    </div>`).join('');
+}
+
+document.getElementById('modal').addEventListener('click', e=>{
+  if(e.target===document.getElementById('modal')) cerrar();
+});
+
+document.getElementById('fecha-hoy').textContent =
+  new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+render();
+</script>
+</body>
+</html>
